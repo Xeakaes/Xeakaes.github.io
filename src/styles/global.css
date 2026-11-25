@@ -1,0 +1,120 @@
+/* ---------- Fonts (self-hosted, Latin + Latin Extended) ---------- */
+@font-face { font-family: 'Space Grotesk'; font-weight: 500; font-display: swap; src: url('../fonts/space-grotesk-latin-500-normal.woff2') format('woff2'); unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD; }
+@font-face { font-family: 'Space Grotesk'; font-weight: 500; font-display: swap; src: url('../fonts/space-grotesk-latin-ext-500-normal.woff2') format('woff2'); unicode-range: U+0100-02BA, U+02BD-02C5, U+02C7-02CC, U+02CE-02D7, U+02DD-02FF, U+1D00-1DBF, U+1E00-1E9F, U+1EF2-1EFF, U+2020, U+20A0-20AB, U+20AD-20C0, U+2113, U+2C60-2C7F, U+A720-A7FF; }
+@font-face { font-family: 'Inter'; font-weight: 100 900; font-display: swap; src: url('../fonts/inter-latin-wght-normal.woff2') format('woff2'); unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD; }
+@font-face { font-family: 'Inter'; font-weight: 100 900; font-display: swap; src: url('../fonts/inter-latin-ext-wght-normal.woff2') format('woff2'); unicode-range: U+0100-02BA, U+02BD-02C5, U+02C7-02CC, U+02CE-02D7, U+02DD-02FF, U+1D00-1DBF, U+1E00-1E9F, U+1EF2-1EFF, U+2020, U+20A0-20AB, U+20AD-20C0, U+2113, U+2C60-2C7F, U+A720-A7FF; }
+@font-face { font-family: 'Plex Mono'; font-weight: 400; font-display: swap; src: url('../fonts/ibm-plex-mono-latin-400-normal.woff2') format('woff2'); unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212; }
+@font-face { font-family: 'Plex Mono'; font-weight: 400; font-display: swap; src: url('../fonts/ibm-plex-mono-latin-ext-400-normal.woff2') format('woff2'); unicode-range: U+0100-02BA, U+02BD-02C5, U+02C7-02CC, U+02CE-02D7, U+02DD-02FF, U+1E00-1E9F; }
+
+/* ---------- Tokens ---------- */
+:root {
+  color-scheme: light;
+  --bg: #E9E7E1;
+  --surface: #E1DED6;
+  --text: #202326;
+  --muted: #55514C;
+  --accent: #C34E36;       /* decorative and large text only */
+  --accent-ink: #94382A;   /* small text and links (also AA on --surface) */
+  --rule: #C9C6BE;         /* decorative dividers */
+  --boundary: #716D66;     /* meaningful UI edges, >= 3:1 */
+  --stage: #D9D5CB;
+
+  --f-display: 'Space Grotesk', ui-sans-serif, system-ui, sans-serif;
+  --f-body: 'Inter', ui-sans-serif, system-ui, sans-serif;
+  --f-mono: 'Plex Mono', ui-monospace, 'SFMono-Regular', monospace;
+
+  /* Fluid type: 360px -> 1440px */
+  --t-hero: clamp(3.1rem, 1.35rem + 7.2vw, 7.6rem);
+  --t-h1: clamp(2.6rem, 1.5rem + 4.6vw, 5.5rem);
+  --t-h2: clamp(2.05rem, 1.35rem + 2.9vw, 3.9rem);
+  --t-h3: clamp(1.4rem, 1.2rem + .85vw, 2rem);
+  --t-lead: clamp(1.125rem, 1.04rem + .38vw, 1.375rem);
+  --t-body: clamp(1rem, .97rem + .14vw, 1.0625rem);
+  --t-meta: .8125rem;
+
+  --gutter: clamp(1.25rem, .4rem + 3.6vw, 4rem);
+  --section: clamp(5rem, 2.5rem + 9vw, 10rem);
+  --col-gap: clamp(1rem, .2rem + 2.2vw, 2rem);
+  --max: 88rem;
+}
+/* No-JS: follow the OS. With JS, data-theme is always set. */
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme]) {
+    color-scheme: dark;
+    --bg: #202326; --surface: #282B2E; --text: #F0EFEA; --muted: #A6AAAB;
+    --accent: #E17B60; --accent-ink: #E98B72; --rule: #484C4E; --boundary: #7E8386; --stage: #181A1C;
+  }
+}
+:root[data-theme='dark'] {
+  color-scheme: dark;
+  --bg: #202326; --surface: #282B2E; --text: #F0EFEA; --muted: #A6AAAB;
+  --accent: #E17B60; --accent-ink: #E98B72; --rule: #484C4E; --boundary: #7E8386; --stage: #181A1C;
+}
+
+/* ---------- Base ---------- */
+*, *::before, *::after { box-sizing: border-box; }
+html { -webkit-text-size-adjust: 100%; text-size-adjust: 100%; }
+body { margin: 0; background: var(--bg); color: var(--text); font: 400 var(--t-body)/1.65 var(--f-body); -webkit-font-smoothing: antialiased; overflow-wrap: break-word; }
+h1, h2, h3, h4 { font-family: var(--f-display); font-weight: 500; line-height: 1.04; letter-spacing: -.025em; margin: 0; text-wrap: balance; }
+h2 { font-size: var(--t-h2); }
+h3 { font-size: var(--t-h3); line-height: 1.12; }
+h4 { font-size: 1.125rem; letter-spacing: -.01em; line-height: 1.25; }
+p { margin: 0 0 1em; max-width: 68ch; text-wrap: pretty; }
+p:last-child { margin-bottom: 0; }
+img, svg, video { display: block; max-width: 100%; }
+img { height: auto; }
+[hidden] { display: none !important; }
+a { color: var(--accent-ink); text-underline-offset: .2em; text-decoration-thickness: 1px; }
+a:hover { text-decoration-thickness: 2px; }
+:focus-visible { outline: 2px solid var(--accent-ink); outline-offset: 3px; }
+::selection { background: var(--accent); color: #fff; }
+
+.wrap { width: 100%; max-width: calc(var(--max) + 2 * var(--gutter)); margin-inline: auto; padding-inline: var(--gutter); }
+.grid { display: grid; grid-template-columns: repeat(12, minmax(0, 1fr)); column-gap: var(--col-gap); }
+.grid > * { grid-column: 1 / -1; min-width: 0; }
+.meta { font: 400 var(--t-meta)/1.6 var(--f-mono); color: var(--muted); }
+.lead { font-size: var(--t-lead); line-height: 1.5; max-width: 52ch; }
+.muted { color: var(--muted); }
+
+.skip { position: absolute; left: var(--gutter); top: -5rem; background: var(--text); color: var(--bg); padding: .75rem 1rem; z-index: 20; }
+.skip:focus { top: .5rem; }
+
+.btn { display: inline-flex; align-items: center; gap: .75rem; min-height: 48px; padding: .65rem 1.35rem; border: 1px solid var(--boundary); color: var(--text); background: transparent; font: 500 .8125rem/1 var(--f-body); letter-spacing: .09em; text-transform: uppercase; text-decoration: none; cursor: pointer; transition: background-color .2s, color .2s, border-color .2s; }
+.btn:hover { border-color: var(--text); text-decoration: none; }
+.btn--solid { background: var(--text); border-color: var(--text); color: var(--bg); }
+.btn--solid:hover { background: var(--accent-ink); border-color: var(--accent-ink); color: var(--bg); }
+.btn span[aria-hidden] { transition: transform .25s; }
+.btn:hover span[aria-hidden] { transform: translateX(4px); }
+
+.textlink { display: inline-flex; align-items: center; min-height: 44px; gap: .5rem; font-weight: 500; }
+.textlink span[aria-hidden] { transition: transform .25s; }
+.textlink:hover span[aria-hidden] { transform: translateX(4px); }
+
+.linkrow { display: flex; flex-wrap: wrap; column-gap: 1.75rem; list-style: none; padding: 0; margin: 0; }
+
+.tags { display: flex; flex-wrap: wrap; gap: .15rem 0; list-style: none; padding: 0; margin: 0; font: 400 var(--t-meta)/1.8 var(--f-mono); color: var(--muted); }
+.tags li:not(:last-child)::after { content: '/'; padding-inline: .6em; color: var(--boundary); }
+
+/* ---------- Section heads ---------- */
+.section { padding-block: var(--section) 0; scroll-margin-top: 0; }
+.section-head { border-top: 1px solid var(--text); padding-top: 1.25rem; margin-bottom: clamp(2.5rem, 1rem + 5vw, 5rem); row-gap: 1rem; align-items: start; }
+@media (min-width: 56rem) {
+  .section-head h2 { grid-column: 1 / span 7; }
+  .section-head p { grid-column: 8 / span 5; padding-top: .35rem; }
+}
+
+/* ---------- Entrance (only once the script confirms it can undo it) ---------- */
+@media (prefers-reduced-motion: no-preference) {
+  .reveal-ready [data-reveal] { opacity: 0; transform: translateY(18px); transition: opacity .7s ease, transform .7s cubic-bezier(.2,.7,.2,1); }
+  .reveal-ready [data-reveal].is-in { opacity: 1; transform: none; }
+  @view-transition { navigation: auto; }
+  ::view-transition-old(root) { animation: vt-out .16s ease both; }
+  ::view-transition-new(root) { animation: vt-in .28s ease both; }
+  ::view-transition-group(*) { animation-duration: .35s; }
+}
+@keyframes vt-out { to { opacity: 0; } }
+@keyframes vt-in { from { opacity: 0; transform: translateY(8px); } }
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after { animation: none !important; transition: none !important; scroll-behavior: auto !important; }
+}
+@media print { .reveal-ready [data-reveal] { opacity: 1; transform: none; } }

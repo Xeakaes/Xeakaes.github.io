@@ -1,0 +1,100 @@
+---
+title: Screen Control
+order: 2
+tier: 2
+summary: Screen perception and safety-gated desktop control for AI agents, through a local HTTP API and MCP.
+description: 'Case study: Screen Control (computer-use-for-all-agents) lets AI agents see and control a desktop through a safety-gated local API and MCP.'
+status: Public repository
+license: MIT
+platform: Windows 10/11 · Linux X11 with limits
+technologies: [Python, Flask, MCP, mss, Pillow, pyautogui, Win32 API, RapidOCR (optional)]
+links:
+  - { label: GitHub, href: 'https://github.com/Xeakaes/computer-use-for-all-agents' }
+---
+import GateDiagram from '../../components/GateDiagram.astro';
+import Demo from '../../components/Demo.astro';
+
+<Chapter title="Watch it type">
+
+<Demo />
+
+</Chapter>
+
+<Chapter title="What and why">
+
+The repository is named **computer-use-for-all-agents**. Its documentation also calls the tool Screen Control.
+
+The problem it states: agents can write code and call APIs, but cannot see or touch your desktop. Screen Control is the layer that perceives and acts. It contains no AI model; the connected agent does the reasoning.
+
+The server runs on your own machine. That does not make the connected model local: whatever the agent reads from the screen goes wherever that agent’s model runs.
+
+</Chapter>
+
+<Chapter title="Perception, decision, action" wide>
+
+<GateDiagram />
+
+</Chapter>
+
+<Chapter title="Seeing the screen">
+
+OCR turns on-screen text into data, so a text-only model can follow what is happening. Vision-capable models can request single frames or a live MJPEG stream. A text-based diff reports which areas changed without needing a vision model. OCR is optional; the rest works without it.
+
+On the action side there is mouse input, Unicode-safe typing, window management, and relative mouse movement and held keys for games. Windows also supports virtual desktops and focus-free control of background windows.
+
+</Chapter>
+
+<Chapter title="Safety as the design">
+
+The checks live in the server. The MCP wrapper adds no new powers and goes through the same rules.
+
+### Who may call
+Requests need an auth token. The server binds to the local machine by default and rejects untrusted Host headers, which guards against DNS rebinding. Opening it to a network is possible, and the documentation warns that this lets others on the network control the machine.
+
+### Where input may go
+When the caller names a target window, the focus guard refuses to type if a different window is in front.
+
+### What is refused
+Shortcuts including the Windows key, Ctrl+Alt+Del, Alt+F4 and Shift+Delete are blocked. A list of critical system processes cannot be killed, and the launch endpoint refuses interpreters and shells.
+
+### When something sticks
+A watchdog releases held keys and buttons after 30 seconds of inactivity. A release-all endpoint does it immediately.
+
+These measures reduce risk; they do not make giving an agent control of a computer risk-free.
+
+</Chapter>
+
+<Chapter title="Architecture">
+
+An agent connects through REST, or through `mcp_server.py` over stdio or streamable HTTP. The MCP server is a thin wrapper around the Flask API. Behind the API, platform backends handle the operating system.
+
+<ul class="rows">
+  <li><strong>Windows 10/11:</strong> the reference backend.</li>
+  <li><strong>Linux:</strong> supported with limits in X11 sessions, tested on Linux Mint with Cinnamon. Background input takes focus, there are no virtual desktops, and the cursor cannot be clipped in game mode.</li>
+  <li><strong>Wayland:</strong> not supported. The server refuses to start.</li>
+  <li><strong>macOS:</strong> a stub that reports itself unavailable.</li>
+</ul>
+
+The documentation also notes that speed depends on the agent: model latency and context size set the pace of each perceive, act and verify round.
+
+</Chapter>
+
+<Chapter title="Development journey">
+
+From the commit history, 2026:
+
+<ol class="log">
+  <li><time datetime="2026-09-15">15 September</time><span>First release of the safety-gated API, with CI and a self-captured typing demo.</span></li>
+  <li><time datetime="2026-09-16">16 September</time><span>Findings from a security audit are fixed, and scoped, expiring, revocable API keys are added.</span></li>
+  <li><time datetime="2026-09-17">17 September</time><span>Platform backends are separated from the server, with stubs that fail closed and a fake desktop for tests.</span></li>
+  <li><time datetime="2026-10-08">5–8 October</time><span>The Linux X11 backend is built, including a fix for a way to bypass blocked keys on Linux.</span></li>
+  <li><time datetime="2026-10-29">29 October</time><span>Findings from a Strix security test are addressed.</span></li>
+</ol>
+
+</Chapter>
+
+<Chapter title="Future direction">
+
+The roadmap describes Wayland and macOS support as later phases. Neither works today.
+
+</Chapter>

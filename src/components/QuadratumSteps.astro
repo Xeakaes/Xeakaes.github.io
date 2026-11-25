@@ -1,0 +1,39 @@
+---
+const R = 44;
+const poly = (rad: number, turned: boolean) => [0, 90, 180, 270].map((a) => { const t = ((a + (turned ? 0 : 45)) * Math.PI) / 180; return `${(rad * Math.cos(t)).toFixed(2)},${(rad * Math.sin(t)).toFixed(2)}`; }).join(' ');
+const steps = [1, 2, 3, 6];
+const labels = ['circle', '+ square', '+ circle', 'repeat'];
+---
+<figure class="steps">
+  <ol>
+    {steps.map((count, k) => (
+      <li>
+        <svg viewBox="-48 -48 96 96" aria-hidden="true">
+          {Array.from({ length: count }, (_, i) => {
+            // element i alternates: circle, square, circle…
+            if (k < 3) {
+              if (i === 0) return <circle r={R} />;
+              if (i === 1) return <polygon points={poly(R, false)} />;
+              return <circle class="new" r={R / Math.SQRT2} />;
+            }
+            const rad = R / Math.SQRT2 ** i;
+            return <g><circle r={rad} /><polygon points={poly(rad, i % 2 === 1)} /></g>;
+          })}
+        </svg>
+        <span class="meta">{k + 1}. {labels[k]}</span>
+      </li>
+    ))}
+  </ol>
+  <figcaption class="meta">r(n) = R / √2ⁿ</figcaption>
+</figure>
+<style>
+  .steps { margin: 0 auto; max-width: 40rem; container-type: inline-size; }
+  @container (min-width: 30rem) { .steps ol { grid-template-columns: repeat(4, 1fr); } }
+  ol { list-style: none; margin: 0; padding: 0; display: grid; grid-template-columns: 1fr 1fr; gap: 1.25rem; }
+  svg { width: 100%; height: auto; }
+  svg :global(circle), svg :global(polygon) { fill: none; stroke: var(--text); stroke-width: 1; vector-effect: non-scaling-stroke; }
+  svg :global(.new) { stroke: var(--accent); stroke-width: 2; }
+  @media (min-width: 56rem) { .steps ol { grid-template-columns: 1fr 1fr; } }
+  li span { display: block; margin-top: .5rem; }
+  figcaption { margin-top: 1rem; }
+</style>

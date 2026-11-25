@@ -1,0 +1,52 @@
+---
+import type { CollectionEntry } from 'astro:content';
+import { Picture } from 'astro:assets';
+import PreUpscaleDiagram from './PreUpscaleDiagram.astro';
+import QuadratumSteps from './QuadratumSteps.astro';
+interface Props { entry: CollectionEntry<'experiments'>; index: number }
+const { entry, index } = Astro.props;
+const d = entry.data;
+const diagrams = { 'pre-upscale': PreUpscaleDiagram, 'ad-quadratum': QuadratumSteps };
+const Diagram = d.diagram ? diagrams[d.diagram] : null;
+const slug = entry.id.split('/')[0];
+---
+<article class:list={['grid', 'exp', { flip: index % 2 === 1 }]} data-reveal aria-labelledby={`x-${slug}`}>
+  <div class="visual">
+    {Diagram ? <Diagram /> : d.image && <Picture src={d.image.src} alt={d.image.alt} formats={['avif', 'webp']} widths={[480, 800, 1200]} sizes="(min-width: 56rem) 50vw, 92vw" loading="lazy" />}
+  </div>
+  <div class="text">
+    <p class="status meta">{d.status}</p>
+    <h3 id={`x-${slug}`}>{d.title}</h3>
+    <p>{d.summary}</p>
+    <ul class="notes">{d.notes.map((n) => <li>{n}</li>)}</ul>
+    {d.technologies.length > 0 && <ul class="tags">{d.technologies.map((t) => <li>{t}</li>)}</ul>}
+    {d.credits.length > 0 && (
+      <div class="credits">
+        <h4>Credits</h4>
+        <ul>{d.credits.map((c) => <li>{c.href ? <a href={c.href}>{c.name}</a> : <span>{c.name}</span>}: {c.role}</li>)}</ul>
+      </div>
+    )}
+    {d.disclaimer && <p class="meta">{d.disclaimer}</p>}
+    {d.links.length > 0 && <ul class="linkrow">{d.links.map((l) => <li><a class="textlink" href={l.href}>{l.label} <span aria-hidden="true">↗</span></a></li>)}</ul>}
+  </div>
+</article>
+<style>
+  .exp { row-gap: 2rem; align-items: start; }
+  .exp + :global(.exp) { margin-top: clamp(4rem, 9vw, 8rem); }
+  .visual { border: 1px dashed var(--boundary); padding: clamp(1rem, 3vw, 2.5rem); }
+  .status { display: inline-block; border: 1px solid var(--accent); color: var(--accent-ink); padding: .15rem .6rem; margin-bottom: 1rem; }
+  h3 { margin-bottom: .85rem; }
+  .notes { padding: 0; list-style: none; margin: 1.25rem 0; }
+  .notes li { border-top: 1px solid var(--rule); padding: .65rem 0; font-size: .9375rem; color: var(--muted); }
+  .credits { margin: 1.5rem 0 1rem; }
+  h4 { font-size: 1rem; margin-bottom: .25rem; }
+  .credits ul { list-style: none; padding: 0; margin: 0; font-size: .9375rem; }
+  .credits a, .credits li > span { display: inline-block; padding-block: .5rem; }
+  .text > .tags { margin-block: 1rem; }
+  @media (min-width: 56rem) {
+    .visual { grid-column: 1 / span 7; }
+    .text { grid-column: 9 / span 4; }
+    .flip .visual { grid-column: 8 / span 4; grid-row: 1; margin-top: -2rem; }
+    .flip .text { grid-column: 2 / span 5; grid-row: 1; }
+  }
+</style>

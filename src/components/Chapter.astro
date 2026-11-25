@@ -1,0 +1,20 @@
+---
+/** A case study section: heading in the margin, content beside it. */
+interface Props { title: string; wide?: boolean }
+const { title, wide = false } = Astro.props;
+const id = title.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '');
+---
+<section class:list={['grid', 'chapter', { wide }]} aria-labelledby={id}>
+  <h2 id={id}>{title}</h2>
+  <div class="content"><slot /></div>
+</section>
+<style>
+  .chapter { border-top: 1px solid var(--rule); padding-block: 1.5rem clamp(3rem, 7vw, 6rem); row-gap: 1.5rem; }
+  h2 { font-size: clamp(1.5rem, 1.2rem + 1.2vw, 2.15rem); line-height: 1.12; }
+  @media (min-width: 56rem) {
+    h2 { grid-column: 1 / span 3; }
+    .content { grid-column: 5 / span 7; }
+    .wide h2 { grid-column: 1 / -1; max-width: 18em; }
+    .wide .content { grid-column: 1 / -1; }
+  }
+</style>

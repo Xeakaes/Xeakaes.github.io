@@ -1,0 +1,41 @@
+---
+import Phone from './Phone.astro';
+import ember from '../assets/pchw/main_ember.jpg';
+import light from '../assets/pchw/main_light.jpg';
+import settings from '../assets/pchw/settings_light.jpg';
+import land from '../assets/pchw/main_landscape.jpg';
+interface Props { href?: string; eager?: boolean }
+const { href, eager = false } = Astro.props;
+---
+<figure class="stage">
+  <div class="comp">
+    <Phone class="p p--light" src={light} alt="PC HW Monitor dashboard in a light theme, showing CPU temperature, usage, clock and power above a GPU card." eager={eager} />
+    <Phone class="p p--ember" src={ember} alt="PC HW Monitor dashboard in the dark Ember palette, with a CPU temperature gauge, live chart and GPU readings." eager={eager} />
+    <Phone class="p p--set" src={settings} alt="PC HW Monitor settings with connection status, theme selector, color palette swatches and chart window options." eager={eager} />
+    <Phone class="p p--land" landscape src={land} alt="PC HW Monitor in landscape: CPU, GPU and disk cards arranged on one screen." eager={eager} />
+  </div>
+  <figcaption class="meta">
+    <span>Real screenshots from the repository.</span>
+    {href && <a href={href} tabindex="-1" aria-hidden="true">Case study →</a>}
+  </figcaption>
+</figure>
+<style>
+  /* Plate drawn on the same 12-column logic as the page. */
+  .stage { margin: 0; background-color: var(--stage); background-image: linear-gradient(90deg, var(--rule) 1px, transparent 1px); background-size: calc(100% / 12) 100%; border: 1px solid var(--rule); overflow: hidden; view-transition-name: pchw-stage; }
+  .comp { display: grid; grid-template-columns: repeat(12, 1fr); column-gap: 2%; padding: clamp(1.25rem, 4vw, 4rem) clamp(1rem, 4vw, 4rem) 1.5rem; align-items: start; }
+  .comp :global(.p--ember) { grid-column: 4 / span 6; grid-row: 1; z-index: 2; }
+  .comp :global(.p--light) { grid-column: 1 / span 4; grid-row: 1; margin: 18% -18% 0 0; }
+  .comp :global(.p--set) { grid-column: 9 / span 4; grid-row: 1; margin: 28% 0 0 -18%; }
+  .comp :global(.p--land) { grid-column: 1 / -1; grid-row: 2; margin-top: 1.25rem; }
+  figcaption { display: flex; justify-content: space-between; gap: 1rem; padding: .75rem clamp(1rem, 2vw, 1.5rem); border-top: 1px solid var(--rule); background: var(--bg); }
+  figcaption a { white-space: nowrap; }
+  @media (max-width: 37.99rem) { figcaption a { display: none; } }
+  @media (min-width: 56rem) {
+    .comp { padding-block: 3.5rem; }
+    .comp :global(.p--light) { grid-column: 1 / span 3; margin: 14% -4% 0 0; }
+    .comp :global(.p--ember) { grid-column: 4 / span 4; margin: 0 4%; }
+    .comp :global(.p--set) { grid-column: 8 / span 3; margin: 7% 0 0 -6%; }
+    /* the landscape view crosses the lower right of the portrait stack */
+    .comp :global(.p--land) { grid-column: 8 / span 5; grid-row: 1; align-self: end; margin: 0 -2% 6% 18%; z-index: 3; }
+  }
+</style>

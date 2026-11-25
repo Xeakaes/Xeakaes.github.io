@@ -1,0 +1,30 @@
+---
+import Base from '../layouts/Base.astro';
+import { url } from '../scripts/url';
+import { owner } from '../config/site';
+---
+<Base title={`Page not found — ${owner.name}`} description="This page does not exist. Head back to the portfolio." path="404.html" noindex>
+  <section class="wrap grid lost">
+    <div class="t">
+      <p class="meta">Error 404</p>
+      <h1>This point isn’t on the grid.</h1>
+      <p class="lead">The page may have moved, or the address has a typo.</p>
+      <p class="actions"><a class="btn btn--solid" href={url()}>Go to the homepage</a> <a class="btn" href={url('#work')}>See the work</a></p>
+    </div>
+    <svg viewBox="-110 -110 220 220" aria-hidden="true">
+      <path class="g" d="M-110 0H110M0 -110V110M-70 -110V110M70 -110V110M-110 -70H110M-110 70H110" />
+      <circle r="99" /><polygon points="70,70 -70,70 -70,-70 70,-70" /><circle r="70" /><polygon points="70,0 0,70 -70,0 0,-70" /><circle r="49.5" />
+      <circle class="stray" cx="94" cy="-91" r="6" />
+    </svg>
+  </section>
+</Base>
+<style>
+  .lost { padding-block: clamp(3rem, 10vh, 7rem) 0; row-gap: 3rem; align-items: center; }
+  h1 { font-size: var(--t-h1); letter-spacing: -.04em; line-height: 1; margin-bottom: 1.5rem; }
+  .actions { display: flex; flex-wrap: wrap; gap: .75rem; margin-top: 2rem; }
+  svg { width: min(100%, 22rem); justify-self: center; fill: none; stroke: var(--text); }
+  svg * { vector-effect: non-scaling-stroke; }
+  .g { stroke: var(--rule); }
+  .stray { fill: var(--accent); stroke: none; }
+  @media (min-width: 56rem) { .t { grid-column: 1 / span 7; } svg { grid-column: 9 / span 4; } }
+</style>

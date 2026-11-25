@@ -1,0 +1,86 @@
+---
+/**
+ * CONSTRUCTION RULE — "ad quadratum".
+ * Start with a circle of radius R. Inscribe a square in it. Inscribe a circle in
+ * that square. Repeat. Every step divides the radius by √2 (so area halves),
+ * and every second square is turned back to the first one's orientation.
+ *
+ *   r(n) = R / √2ⁿ ,  n = 0…6 ,  R = 300
+ *
+ * Everything else is derived from those radii:
+ *  - coordinate lines sit on tangents of r(0), r(2) and r(4);
+ *  - nodes sit on square vertices, so they always lie exactly on a circle;
+ *  - the one intersecting circle has radius r(1), centred on r(0) at −45°;
+ *  - terracotta marks one circular segment (between r(2) and its square side)
+ *    and the centre.
+ * The slow motion turns each square about the shared centre: its vertices stay
+ * on its outer circle and its sides stay tangent to the inner one, so the
+ * construction remains true at every frame.
+ */
+const R = 300;
+const r = Array.from({ length: 7 }, (_, n) => R / Math.SQRT2 ** n);
+const square = (rad: number, turned: boolean) => {
+  const start = turned ? 0 : 45;
+  return [0, 90, 180, 270]
+    .map((a) => {
+      const t = ((a + start) * Math.PI) / 180;
+      return `${(rad * Math.cos(t)).toFixed(2)},${(rad * Math.sin(t)).toFixed(2)}`;
+    })
+    .join(' ');
+};
+const lines = [r[0], r[2], r[4]].flatMap((v) => [-v, v]).concat(0);
+const d45 = r[0] * Math.SQRT1_2;
+const half = r[2] * Math.SQRT1_2; // half side of the square inscribed in r(2)
+---
+<div class="art" data-art>
+  <svg viewBox="-400 -400 800 800" aria-hidden="true" focusable="false">
+    <g class="layer layer--grid">
+      {lines.map((v) => (<><line class="grid-line" x1={v} y1="-400" x2={v} y2="400" /><line class="grid-line" x1="-400" y1={v} x2="400" y2={v} /></>))}
+      <line class="grid-line" x1="-400" y1="-400" x2="400" y2="400" />
+    </g>
+    <g class="layer layer--mid">
+      <path class="fill-accent" d={`M ${half} ${-half} A ${r[2]} ${r[2]} 0 0 1 ${half} ${half} Z`} />
+      {r.map((rad, n) => <circle class="stroke draw" pathLength="1" r={rad.toFixed(2)} style={`--d:${n * 0.12}s`} />)}
+      {r.slice(0, 6).map((rad, n) => (
+        <g class="turn" style={`--dur:${200 + n * 40}s; --dir:${n % 2 ? 'reverse' : 'normal'}`}>
+          <polygon class={`stroke draw ${n > 1 ? 'stroke--soft' : ''}`} pathLength="1" points={square(rad, n % 2 === 1)} style={`--d:${0.2 + n * 0.12}s`} />
+          {n < 3 && square(rad, n % 2 === 1).split(' ').map((p, i) => {
+            const [x, y] = p.split(',');
+            return i === (n + 1) % 4 ? <circle class="node node--accent" cx={x} cy={y} r="7" /> : <circle class="node" cx={x} cy={y} r="3.5" />;
+          })}
+        </g>
+      ))}
+      <circle class="centre" r="5" />
+    </g>
+    <g class="layer layer--top">
+      <circle class="stroke stroke--accent draw" pathLength="1" cx={d45.toFixed(2)} cy={(-d45).toFixed(2)} r={r[1].toFixed(2)} style="--d:1s" />
+      <rect class="module" x={-r[0]} y={r[2]} width={r[0] - r[2]} height={r[0] - r[2]} />
+      <line class="stroke" x1={-r[0]} y1={r[2]} x2={-r[2]} y2={r[0]} />
+    </g>
+  </svg>
+</div>
+<style>
+  .art { --px: 0; --py: 0; position: relative; width: 100%; aspect-ratio: 1; }
+  svg { width: 100%; height: 100%; overflow: visible; }
+  .stroke { fill: none; stroke: var(--text); stroke-width: 1.1; vector-effect: non-scaling-stroke; }
+  .stroke--soft { stroke: var(--boundary); }
+  .stroke--accent { stroke: var(--accent); stroke-width: 1.5; }
+  .grid-line { stroke: var(--rule); stroke-width: 1; vector-effect: non-scaling-stroke; }
+  .fill-accent, .centre, .node--accent { fill: var(--accent); }
+  .node { fill: var(--text); }
+  .node--accent { fill: var(--accent); }
+  .module { fill: var(--text); }
+  .turn { transform-origin: 0 0; }
+  .layer { transform: translate(calc(var(--px) * var(--k) * 1px), calc(var(--py) * var(--k) * 1px)); transition: transform .5s ease-out; }
+  .layer--grid { --k: -6; } .layer--mid { --k: 7; } .layer--top { --k: 16; }
+  @media (prefers-reduced-motion: no-preference) {
+    .draw { stroke-dasharray: 1 1; animation: draw 1.5s var(--d) cubic-bezier(.6,0,.2,1) backwards; }
+    /* non-scaling-stroke breaks pathLength dashes, so it is off while drawing */
+    .draw { vector-effect: none; }
+    :global(.js) .turn { animation: turn var(--dur) linear 2.4s infinite var(--dir); }
+    .art:global(.is-paused) .turn { animation-play-state: paused !important; }
+  }
+  @media (max-width: 45.99rem) { .grid-line { opacity: .8; } .layer { transform: none; } }
+  @keyframes draw { from { stroke-dashoffset: 1; } to { stroke-dashoffset: 0; } }
+  @keyframes turn { to { transform: rotate(360deg); } }
+</style>

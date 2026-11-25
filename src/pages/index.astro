@@ -1,0 +1,135 @@
+---
+import { getCollection } from 'astro:content';
+import Base from '../layouts/Base.astro';
+import HeroArt from '../components/HeroArt.astro';
+import Featured from '../components/Featured.astro';
+import Secondary from '../components/Secondary.astro';
+import Experiment from '../components/Experiment.astro';
+import { meta, owner } from '../config/site';
+import { url } from '../scripts/url';
+
+const projects = (await getCollection('projects')).sort((a, b) => a.data.order - b.data.order);
+const experiments = (await getCollection('experiments')).sort((a, b) => a.data.order - b.data.order);
+const featured = projects.find((p) => p.data.tier === 1)!;
+const secondary = projects.filter((p) => p.data.tier === 2);
+---
+<Base title={meta.title} description={meta.description} path="">
+  <section class="wrap hero" aria-labelledby="hero-title">
+    <div class="grid hero-grid">
+      <div class="copy">
+        <p class="meta label">INDEPENDENT DEVELOPER <span aria-hidden="true">·</span> <span class="nw">MEDICAL STUDENT</span></p>
+        <h1 id="hero-title"><span>Curiosity,</span> <span>made</span> <span>tangible.</span></h1>
+        <p class="lead">I explore ideas, build software, and turn complex problems into useful things.</p>
+        <div class="actions">
+          <a class="btn btn--solid" href="#work">Explore work <span aria-hidden="true">↓</span></a>
+          <a class="btn" href="#about">About me</a>
+        </div>
+      </div>
+      <div class="visual"><HeroArt /></div>
+    </div>
+    <p class="now meta">Featured: <a href={url(`work/${featured.id}/`)}>{featured.data.title}, open-source PC monitoring on Android</a></p>
+  </section>
+
+  <section id="work" class="wrap section" aria-labelledby="work-title">
+    <div class="grid section-head">
+      <h2 id="work-title">Selected work</h2>
+      <p class="muted">One released product in detail, then three projects about agents, airflow and a desktop assistant.</p>
+    </div>
+    <Featured project={featured} />
+    <Secondary projects={secondary} />
+  </section>
+
+  <section id="experiments" class="wrap section" aria-labelledby="exp-title">
+    <div class="grid section-head">
+      <h2 id="exp-title">Experiments</h2>
+      <p class="muted">Exploratory work, labelled with where it actually stands.</p>
+    </div>
+    {experiments.map((e, i) => <Experiment entry={e} index={i} />)}
+  </section>
+
+  <section id="about" class="wrap section" aria-labelledby="about-title">
+    <div class="grid about">
+      <h2 id="about-title">About</h2>
+      <div class="intro" data-reveal>
+        <p>I’m an independent developer interested in building thoughtful software, exploring unconventional ideas, and turning curiosity into tangible projects.</p>
+      </div>
+      <div class="col col--a" data-reveal>
+        <h3>Building &amp; exploring</h3>
+        <p>My work moves between software engineering, interface design, open-source development, and technical experimentation.</p>
+      </div>
+      <div class="col col--b" data-reveal>
+        <h3>Beyond the screen</h3>
+        <p>Alongside this, I’m pursuing medical studies — another way of understanding complex systems and the world around me.</p>
+      </div>
+      <p class="creed" data-reveal>Curiosity asks the question. Making something tangible is a way to test the answer.</p>
+    </div>
+  </section>
+
+  <section id="contact" class="wrap section" aria-labelledby="contact-title">
+    <div class="contact">
+      <svg class="echo" viewBox="-100 -100 200 200" aria-hidden="true">
+        <circle r="99" /><polygon points="70,70 -70,70 -70,-70 70,-70" /><circle r="70" /><polygon points="70,0 0,70 -70,0 0,-70" /><circle r="49.5" />
+        <circle class="dot" cx="70" cy="-70" r="4" />
+      </svg>
+      <div class="inner">
+        <h2 id="contact-title">Have an idea worth exploring?</h2>
+        <p class="lead">If you’d like to collaborate, talk something through, or just say hello, I’d be glad to hear from you.</p>
+        <div class="mailrow">
+          <a class="mail" href={`mailto:${owner.email}`}>{owner.email.split('@')[0]}<wbr />@{owner.email.split('@')[1]}</a>
+          <button type="button" class="btn" data-copy={owner.email} hidden>Copy email</button>
+        </div>
+        <p class="meta" role="status" data-copy-status></p>
+        <a class="textlink" href={owner.github}>GitHub: {owner.githubUser} <span aria-hidden="true">→</span></a>
+      </div>
+    </div>
+  </section>
+</Base>
+
+<style>
+  .hero { padding-top: clamp(1.5rem, 5vh, 4.5rem); }
+  .hero-grid { row-gap: 2.5rem; align-items: center; }
+  .label { margin-bottom: clamp(1.25rem, 3vh, 2.25rem); letter-spacing: .06em; }
+  .nw { white-space: nowrap; }
+  h1 { font-size: var(--t-hero); line-height: .94; letter-spacing: -.045em; }
+  h1 span { display: block; }
+  h1 span:last-child { color: var(--accent); }
+  .copy .lead { margin-top: clamp(1.25rem, 3vh, 2.25rem); max-width: 30ch; }
+  .actions { display: flex; flex-wrap: wrap; gap: .75rem; margin-top: 1.75rem; }
+  .visual { width: min(100%, 24rem); justify-self: end; padding: 1rem 0; }
+  .now { max-width: none; margin: clamp(2rem, 6vh, 4rem) 0 0; border-top: 1px solid var(--rule); padding-top: .5rem; }
+  .now a { display: inline-block; padding-block: .7rem; }
+  @media (min-width: 46rem) {
+    .copy { grid-column: 1 / span 7; }
+    .visual { grid-column: 8 / span 5; width: 100%; padding: 0; }
+  }
+  @media (prefers-reduced-motion: no-preference) {
+    h1 span { animation: line .8s cubic-bezier(.2,.7,.2,1) backwards; }
+    h1 span:nth-child(2) { animation-delay: .09s; }
+    h1 span:nth-child(3) { animation-delay: .18s; }
+    @keyframes line { from { clip-path: inset(0 0 100% 0); transform: translateY(.3em); } to { clip-path: inset(-10% -5% -20% -5%); transform: none; } }
+  }
+
+  .about { row-gap: 2.5rem; border-top: 1px solid var(--text); padding-top: 1.25rem; }
+  .intro p { font: 500 clamp(1.5rem, 1.1rem + 1.8vw, 2.6rem)/1.22 var(--f-display); letter-spacing: -.02em; max-width: 26ch; }
+  .col h3 { margin-bottom: .85rem; font-size: 1.25rem; }
+  .col, .creed { border-top: 1px solid var(--rule); padding-top: 1.25rem; }
+  .creed { margin: 0; font: 500 var(--t-h3)/1.25 var(--f-display); letter-spacing: -.015em; max-width: 30ch; border-top: 0; border-left: 3px solid var(--accent); padding: 0 0 0 1.25rem; }
+  @media (min-width: 56rem) {
+    .about h2 { grid-column: 1 / span 3; }
+    .intro { grid-column: 4 / span 9; }
+    .col--a { grid-column: 4 / span 4; }
+    .col--b { grid-column: 9 / span 4; margin-top: 3rem; }
+    .creed { grid-column: 6 / span 7; margin-top: 2rem; }
+  }
+
+  .contact { position: relative; border-top: 1px solid var(--text); padding-top: clamp(2.5rem, 7vw, 6rem); overflow: hidden; }
+  .inner { position: relative; }
+  .contact h2 { font-size: var(--t-h1); max-width: 11em; margin-bottom: 1.5rem; }
+  .mailrow { display: flex; flex-wrap: wrap; align-items: center; gap: 1rem 1.5rem; margin-top: 2.5rem; }
+  .mail { font: 500 clamp(1.3rem, .6rem + 3vw, 2.75rem)/1.3 var(--f-display); letter-spacing: -.02em; color: var(--text); text-decoration-color: var(--accent); min-height: 44px; }
+  .contact [role='status'] { min-height: 1.5rem; margin: .25rem 0; }
+  .echo { position: absolute; width: min(30rem, 62%); right: -6%; top: 1rem; fill: none; stroke: var(--rule); pointer-events: none; }
+  .echo * { vector-effect: non-scaling-stroke; }
+  .echo .dot { fill: var(--accent); stroke: none; }
+  @media (max-width: 55.99rem) { .echo { display: none; } }
+</style>

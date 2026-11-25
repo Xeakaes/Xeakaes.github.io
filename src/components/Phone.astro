@@ -1,0 +1,19 @@
+---
+/** A CSS device frame around a real, unaltered screenshot. */
+import { Picture } from 'astro:assets';
+import type { ImageMetadata } from 'astro';
+interface Props { src: ImageMetadata; alt: string; landscape?: boolean; eager?: boolean; sizes?: string; class?: string }
+const { src, alt, landscape = false, eager = false, sizes, class: cls } = Astro.props;
+---
+<div class:list={['phone', { 'phone--land': landscape }, cls]}>
+  <Picture src={src} alt={alt} formats={['avif', 'webp']} fallbackFormat="jpg"
+    widths={landscape ? [480, 800, 1200, 1600] : [220, 360, 520, 720]}
+    sizes={sizes ?? (landscape ? '(min-width: 56rem) 46vw, 92vw' : '(min-width: 56rem) 20vw, 42vw')}
+    loading={eager ? 'eager' : 'lazy'} decoding="async" />
+</div>
+<style>
+  .phone { background: #0d0e0f; padding: 2.6%; border-radius: 11% / 5%; box-shadow: 0 0 0 1px rgb(255 255 255 / .14) inset, 0 28px 50px -28px rgb(0 0 0 / .55); }
+  .phone :global(img) { width: 100%; border-radius: 8.5% / 3.9%; }
+  .phone--land { padding: 1.2%; border-radius: 4% / 9%; }
+  .phone--land :global(img) { border-radius: 3.2% / 7%; }
+</style>

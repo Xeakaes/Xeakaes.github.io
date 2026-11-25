@@ -1,0 +1,35 @@
+---
+import { url } from '../scripts/url';
+import { owner } from '../config/site';
+---
+<header class="wrap">
+  <div class="bar">
+    <a class="mark" href={url()}>{owner.name}</a>
+    <nav aria-label="Primary">
+      <ul>
+        <li><a href={url('#work')}>Work</a></li>
+        <li><a href={url('#about')}>About</a></li>
+        <li><a href={url('#contact')}>Contact</a></li>
+      </ul>
+    </nav>
+    <button type="button" class="toggle" data-theme-toggle aria-pressed="false" aria-label="Dark theme">
+      <svg viewBox="0 0 16 16" width="16" height="16" aria-hidden="true"><circle cx="8" cy="8" r="6.5" fill="none" stroke="currentColor"/><path d="M8 1.5a6.500 6.500 0 0 1 0 13z" fill="currentColor"/></svg>
+      <span data-theme-text aria-hidden="true">Light</span>
+    </button>
+  </div>
+</header>
+<style>
+  .bar { display: grid; grid-template-columns: 1fr auto auto; align-items: center; column-gap: clamp(1rem, 4vw, 3.5rem); min-height: 4.75rem; border-bottom: 1px solid var(--rule); }
+  .mark { font: 500 1.125rem/1 var(--f-display); letter-spacing: -.02em; color: var(--text); text-decoration: none; display: inline-flex; align-items: center; min-height: 44px; justify-self: start; }
+  ul { display: flex; gap: clamp(1rem, 3vw, 2.5rem); list-style: none; margin: 0; padding: 0; }
+  nav a { display: inline-flex; align-items: center; justify-content: center; min-height: 44px; min-width: 44px; color: var(--text); text-decoration: none; font-size: .75rem; font-weight: 500; letter-spacing: .12em; text-transform: uppercase; background: linear-gradient(var(--accent), var(--accent)) left calc(100% - 9px) / 0 1px no-repeat; transition: background-size .25s; }
+  nav a:hover { background-size: 100% 1px; }
+  .toggle { display: none; align-items: center; gap: .5rem; min-height: 44px; min-width: 5.5rem; justify-content: center; border: 1px solid var(--boundary); background: transparent; color: var(--text); font: 400 .75rem/1 var(--f-mono); cursor: pointer; }
+  :global(.js) .toggle { display: inline-flex; }
+  @media (max-width: 37rem) {
+    .bar { grid-template-columns: 1fr auto; }
+    nav { grid-column: 1 / -1; grid-row: 2; border-top: 1px solid var(--rule); }
+    ul { justify-content: space-between; }
+    nav a { justify-content: start; }
+  }
+</style>

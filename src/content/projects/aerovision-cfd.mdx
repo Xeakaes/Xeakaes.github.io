@@ -1,0 +1,72 @@
+---
+title: AeroVision CFD
+order: 3
+tier: 2
+summary: A desktop flow simulator that solves incompressible Navier-Stokes on a voxel grid, with interactive 3D views.
+description: 'Case study: AeroVision CFD, a desktop flow simulator with a voxelized grid, turbulence models, optional GPU acceleration and stated limits.'
+status: Public repository · tagged releases
+license: GPL-3.0
+platform: Desktop · Windows 10/11 packages
+technologies: [Python, PyQt6, PyVista, NumPy, SciPy, CuPy, PyOpenCL]
+links:
+  - { label: GitHub, href: 'https://github.com/Xeakaes/AeroVision-CFD' }
+---
+import VoxelDiagram from '../../components/VoxelDiagram.astro';
+
+<Chapter title="Read this first">
+
+AeroVision is a project for exploring flow behaviour. **It should not be relied on for engineering decisions**, and this page makes no claim of validated accuracy. The limits are listed below.
+
+</Chapter>
+
+<Chapter title="From shape to grid">
+
+<VoxelDiagram />
+
+</Chapter>
+
+<Chapter title="The solver">
+
+<ul class="rows">
+  <li><strong>Method:</strong> a collocated finite-volume solver on a voxelized Cartesian grid, using Chorin’s projection method.</li>
+  <li><strong>Coupling and advection:</strong> Rhie-Chow interpolation, and a bounded QUICK scheme with a Van Leer limiter.</li>
+  <li><strong>Time stepping:</strong> second-order Runge-Kutta (Heun) with a CFL-adaptive step.</li>
+  <li><strong>Turbulence:</strong> Spalart-Allmaras, k-epsilon, k-omega SST and Smagorinsky.</li>
+</ul>
+
+</Chapter>
+
+<Chapter title="Working with results">
+
+The desktop interface loads STL geometry and shows it in an interactive 3D view. Post-processing covers cut planes, scalar fields, Q-criterion views and a streamline toggle. There are also batch runs, a command-line parameter sweep, saved presets, a comparison mode, and export to CSV, JSON, VTK and PNG. The interface is available in English and Turkish.
+
+</Chapter>
+
+<Chapter title="Three compute paths">
+
+NVIDIA GPUs run through CuPy. Intel and AMD GPUs run through PyOpenCL with custom kernels. Without a usable GPU, the solver falls back to the CPU. The repository includes a self-test that compares GPU and CPU results.
+
+</Chapter>
+
+<Chapter title="Known limits">
+
+<ul class="rows">
+  <li>NACA 0012 airfoil lift results are <strong>qualitative only</strong>: on a coarse voxel grid the section is only one or two cells thick.</li>
+  <li>On the OpenCL path, k-epsilon, k-omega SST, Smagorinsky and wall functions run on the CPU, so those runs are hybrid.</li>
+  <li>GPU speedup depends on the hardware and grid size, and can be small next to a strong CPU.</li>
+  <li>The repository includes benchmark scripts for sphere drag and airfoil lift. They are not a substitute for independent validation.</li>
+</ul>
+
+</Chapter>
+
+<Chapter title="Development journey">
+
+From the commit history, 2026:
+
+<ol class="log">
+  <li><time datetime="2026-08-03">3 August</time><span>The history opens with OpenCL acceleration, on-device Spalart-Allmaras and release packaging.</span></li>
+  <li><time datetime="2026-10-26">26 October</time><span>A crash in the benchmark script when no STL file is present is fixed, and tagged builds now create releases automatically.</span></li>
+  <li><time datetime="2026-10-29">28–29 October</time><span>A wall boundary condition bug is fixed in two steps. The potential-flow setup had made the body behave like a sink.</span></li>
+</ol>
+
+</Chapter>

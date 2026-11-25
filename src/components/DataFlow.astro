@@ -1,0 +1,31 @@
+---
+const steps = [
+  { k: 'Source', t: 'Windows sensors', d: 'LibreHardwareMonitorLib for hardware, psutil for disk and network, PresentMon for FPS.' },
+  { k: 'Server', t: 'Single EXE', d: 'Python, FastAPI and pythonnet. Listens on port 8765 by default and requires an access token.' },
+  { k: 'Transport', t: 'ws:// or wss://', d: 'One status message per second. TLS is optional.' },
+  { k: 'Client', t: 'Android app', d: 'Talks only to the server. Draws live charts and keeps one hour of history on the phone.' },
+];
+---
+<figure class="flow">
+  <ol>
+    {steps.map((s) => (
+      <li><span class="meta">{s.k}</span><strong>{s.t}</strong><span class="d">{s.d}</span></li>
+    ))}
+  </ol>
+  <figcaption class="meta">Data flow. By default both devices share a Wi-Fi network; an optional Cloudflare Tunnel (quick or named) adds remote access without port forwarding.</figcaption>
+</figure>
+<style>
+  .flow { margin: 0; }
+  ol { list-style: none; margin: 0; padding: 0; display: grid; gap: 2rem; }
+  li { position: relative; display: flex; flex-direction: column; gap: .35rem; border: 1px solid var(--boundary); padding: 1.1rem 1.15rem 1.25rem; }
+  li:not(:last-child)::after { content: '↓'; position: absolute; left: 1.15rem; bottom: -1.8rem; color: var(--accent-ink); }
+  li:nth-child(3) { border-style: dashed; }
+  strong { font: 500 1.25rem/1.2 var(--f-display); letter-spacing: -.01em; }
+  .d { font-size: .9375rem; color: var(--muted); line-height: 1.55; }
+  figcaption { margin-top: 1rem; max-width: 70ch; }
+  @container (min-width: 52rem) {
+    ol { grid-template-columns: repeat(4, 1fr); }
+    li:not(:last-child)::after { content: '→'; left: auto; right: -1.55rem; bottom: auto; top: 1rem; }
+  }
+  .flow { container-type: inline-size; }
+</style>

@@ -1,0 +1,32 @@
+---
+/** Geometry only: a circle marked onto a Cartesian grid. A cell is solid when its
+ *  centre falls inside the circle. No flow field is computed or implied. */
+const cols = 20, rows = 14, s = 20, cx = 8.2 * s, cy = 7 * s, rad = 4.3 * s;
+const cells = [];
+for (let j = 0; j < rows; j++) for (let i = 0; i < cols; i++) {
+  const x = (i + 0.5) * s, y = (j + 0.5) * s;
+  cells.push({ i, j, x, y, solid: (x - cx) ** 2 + (y - cy) ** 2 <= rad ** 2 });
+}
+---
+<figure class="voxel">
+  <svg viewBox={`-34 -2 ${cols * s + 36} ${rows * s + 4}`} role="img" aria-label="Diagram of a round body voxelized onto a Cartesian grid: cells whose centres fall inside the outline are filled.">
+    {cells.map((c) => c.solid
+      ? <rect class="solid" x={c.i * s} y={c.j * s} width={s} height={s} />
+      : <circle class="dot" cx={c.x} cy={c.y} r="1.2" />)}
+    {Array.from({ length: cols + 1 }, (_, i) => <line class="g" x1={i * s} x2={i * s} y1="0" y2={rows * s} />)}
+    {Array.from({ length: rows + 1 }, (_, j) => <line class="g" y1={j * s} y2={j * s} x1="0" x2={cols * s} />)}
+    <circle class="body" cx={cx} cy={cy} r={rad} />
+    {[2, 5, 7, 9, 12].map((j) => <path class="in" d={`M -32 ${j * s} h 24 m -6 -4 l 6 4 l -6 4`} />)}
+  </svg>
+  <figcaption class="meta">Diagram: voxelizing a body onto a Cartesian grid. Arrows mark the inflow direction. Not a simulation result.</figcaption>
+</figure>
+<style>
+  .voxel { margin: 0; max-width: 40rem; }
+  svg { width: 100%; height: auto; }
+  .g { stroke: var(--rule); stroke-width: 1; }
+  .solid { fill: var(--text); }
+  .dot { fill: var(--boundary); }
+  .body { fill: none; stroke: var(--accent); stroke-width: 2; }
+  .in { fill: none; stroke: var(--accent); stroke-width: 1.5; }
+  figcaption { margin-top: .85rem; }
+</style>

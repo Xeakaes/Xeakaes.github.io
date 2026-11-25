@@ -1,0 +1,31 @@
+---
+import { Picture, getImage } from 'astro:assets';
+import poster from '../assets/screen/demo-poster.png';
+import { url } from '../scripts/url';
+const still = await getImage({ src: poster, format: 'webp', width: 820 });
+---
+<figure class="demo" data-demo>
+  <div class="frame">
+    <Picture src={poster} alt="Final frame of the demo: text typed into Windows Notepad by an agent through the Screen Control API." formats={['avif', 'webp']} widths={[480, 820]} sizes="(min-width: 56rem) 52rem, 92vw" loading="lazy" />
+    <!-- Without JavaScript the native controls make the video playable below the poster. -->
+    <video controls muted playsinline preload="none" poster={still.src} width="820" height="428" aria-label="Screen Control typing demo, no sound">
+      <source src={url('media/screen-control-demo.webm')} type="video/webm" />
+      <source src={url('media/screen-control-demo.mp4')} type="video/mp4" />
+    </video>
+    <button type="button" class="btn btn--solid" hidden>Play demo</button>
+  </div>
+  <figcaption class="meta">Demo from the project repository: an agent typing into Notepad through the API. Silent.</figcaption>
+</figure>
+<style>
+  .demo { margin: 0; max-width: 51.25rem; }
+  .frame { position: relative; border: 1px solid var(--boundary); background: #fff; }
+  .frame :global(img), video { width: 100%; height: auto; }
+  :global(html:not(.js)) .frame :global(picture) { display: none; }
+  :global(html.js) .demo video { display: none; }
+  :global(html.js) .demo:global(.is-playing) video { display: block; }
+  :global(html.js) .demo:global(.is-playing) .frame :global(picture) { display: none; }
+  button { position: absolute; left: 50%; top: 50%; transform: translate(-50%, -50%); background: #202326; border-color: #202326; color: #F0EFEA; white-space: nowrap; }
+  button[hidden] { display: none; }
+  button:hover { background: #94382A; border-color: #94382A; color: #fff; }
+  figcaption { margin-top: .85rem; }
+</style>

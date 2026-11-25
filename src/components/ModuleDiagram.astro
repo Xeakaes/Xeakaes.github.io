@@ -1,0 +1,26 @@
+---
+---
+<figure class="mod">
+  <div class="board">
+    <div class="row two"><div class="box"><b>Chat GUI</b><span>History in SQLite</span></div><div class="box"><b>Avatar mode</b><span>State animations</span></div></div>
+    <div class="join" aria-hidden="true"></div>
+    <div class="box core"><b>Agent runtime</b><span>Tool calls · cancellation · permissions</span></div>
+    <div class="join" aria-hidden="true"></div>
+    <div class="row two">
+      <div class="box"><b>Model providers</b><span>Ollama · Groq · NVIDIA · Google · OpenAI-compatible</span></div>
+      <div class="box"><b>Screen control</b><span>Embedded local server</span></div>
+    </div>
+  </div>
+  <figcaption class="meta">Diagram: how the modules relate. Two interfaces share one runtime.</figcaption>
+</figure>
+<style>
+  .mod { margin: 0; }
+  .two { display: grid; grid-template-columns: 1fr 1fr; gap: .75rem; }
+  .box { border: 1px solid var(--boundary); padding: .85rem .9rem; display: flex; flex-direction: column; gap: .25rem; min-width: 0; }
+  b { font: 500 1rem/1.3 var(--f-display); }
+  span { font: 400 .75rem/1.6 var(--f-mono); color: var(--muted); }
+  .core { background: var(--text); border-color: var(--text); color: var(--bg); }
+  .core span { color: var(--bg); }
+  .join { height: 1.5rem; width: 50%; margin-inline: auto; border-inline: 1px solid var(--accent); }
+  figcaption { margin-top: .85rem; }
+</style>

@@ -1,0 +1,80 @@
+---
+import { getCollection, render } from 'astro:content';
+import Base from '../../layouts/Base.astro';
+import Chapter from '../../components/Chapter.astro';
+import { url } from '../../scripts/url';
+import { owner } from '../../config/site';
+
+export async function getStaticPaths() {
+  const all = (await getCollection('projects')).sort((a, b) => a.data.order - b.data.order);
+  return all.map((p, i) => ({
+    params: { slug: p.id },
+    props: { project: p, prev: all[(i - 1 + all.length) % all.length], next: all[(i + 1) % all.length] },
+  }));
+}
+const { project, prev, next } = Astro.props;
+const d = project.data;
+const { Content } = await render(project);
+---
+<Base title={`${d.title} — Case study — ${owner.name}`} description={d.description} path={`work/${project.id}/`}>
+  <article class:list={['wrap', 'case', `case--${project.id}`]}>
+    <header class="grid top">
+      <p class="crumb"><a class="textlink" href={url('#work')}><span aria-hidden="true">←</span> Selected work</a></p>
+      <h1>{d.title}</h1>
+      <p class="lead">{d.summary}</p>
+      <dl>
+        <div><dt>Status</dt><dd>{d.status}</dd></div>
+        <div><dt>Platform</dt><dd>{d.platform}</dd></div>
+        <div><dt>License</dt><dd>{d.license}</dd></div>
+        <div><dt>Built with</dt><dd>{d.technologies.join(', ')}</dd></div>
+      </dl>
+    </header>
+    <Content components={{ Chapter }} />
+    <Chapter title="Links">
+      <ul class="linkrow">{d.links.map((l) => <li><a class="textlink" href={l.href}>{l.label} <span aria-hidden="true">↗</span></a></li>)}</ul>
+    </Chapter>
+    <nav class="pager" aria-label="More case studies">
+      <a href={url(`work/${prev.id}/`)} rel="prev"><span class="meta">Previous</span><span class="n">{prev.data.title}</span></a>
+      <a href={url(`work/${next.id}/`)} rel="next"><span class="meta">Next</span><span class="n">{next.data.title}</span></a>
+    </nav>
+  </article>
+</Base>
+
+<style>
+  .top { padding-block: 1.25rem clamp(3rem, 7vw, 5.5rem); row-gap: 1.5rem; align-items: end; }
+  .crumb { margin: 0; }
+  h1 { font-size: var(--t-h1); letter-spacing: -.04em; line-height: .98; }
+  .top .lead { margin: 0; }
+  dl { margin: 1rem 0 0; display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 13rem), 1fr)); gap: 0 var(--col-gap); }
+  dl div { border-top: 1px solid var(--text); padding-top: .65rem; padding-bottom: 1rem; }
+  dt { font: 400 var(--t-meta)/1.6 var(--f-mono); color: var(--muted); }
+  dd { margin: .2rem 0 0; font-size: .9375rem; }
+  @media (min-width: 56rem) {
+    h1 { grid-column: 1 / span 8; }
+    .top .lead { grid-column: 9 / span 4; }
+  }
+  .pager { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 18rem), 1fr)); border-top: 1px solid var(--text); }
+  .pager a { display: flex; flex-direction: column; gap: .35rem; padding: 1.5rem 0 .5rem; color: var(--text); text-decoration: none; }
+  .pager a[rel='next'] { text-align: right; align-items: flex-end; }
+  .n { font: 500 var(--t-h3)/1.15 var(--f-display); }
+  .pager a:hover .n { text-decoration: underline; text-decoration-color: var(--accent); }
+  .case + :global(footer) { margin-top: 3rem; }
+
+  /* Content styles shared by the MDX chapters */
+  .case :global(ul.rows) { list-style: none; padding: 0; margin: 1.5rem 0 0; }
+  .case :global(ul.rows li) { border-top: 1px solid var(--rule); padding: .85rem 0; }
+  .case :global(.content h3) { font-size: 1.1875rem; margin: 2rem 0 .5rem; letter-spacing: -.01em; }
+  .case :global(.content h3:first-child) { margin-top: 0; }
+  .case :global(ol.log) { list-style: none; padding: 0; margin: 0; }
+  .case :global(ol.log li) { display: grid; gap: .25rem 1.25rem; border-top: 1px solid var(--rule); padding: 1rem 0; }
+  .case :global(ol.log time) { font: 400 var(--t-meta)/1.9 var(--f-mono); color: var(--accent-ink); }
+  @media (min-width: 38rem) { .case :global(ol.log li) { grid-template-columns: 8.5rem 1fr; } }
+  .case :global(.shots) { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: clamp(.75rem, 3vw, 2.5rem); align-items: start; }
+  .case :global(.shots figure) { margin: 0; }
+  .case :global(.shots--lead figure) { border-top: 1px solid var(--rule); padding-top: .75rem; }
+  .case :global(.shots--lead figure:first-child) { grid-column: 1 / -1; width: min(100%, 55rem); }
+  .case :global(.shots + p) { margin-top: 1.25rem; }
+  .case :global(.stage) { margin-bottom: clamp(3rem, 7vw, 6rem); }
+  .case :global(.shots figcaption) { margin-top: .65rem; }
+  @media (min-width: 56rem) { .case :global(.shots--four) { grid-template-columns: repeat(4, minmax(0, 1fr)); } .case :global(.shots--four figure:nth-child(even)) { margin-top: 3rem; } }
+</style>

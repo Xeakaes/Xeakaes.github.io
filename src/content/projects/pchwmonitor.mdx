@@ -1,0 +1,115 @@
+---
+title: PcHWmonitor
+order: 1
+tier: 1
+summary: Your PC’s live hardware stats, streamed from Windows to your Android phone.
+description: 'Case study: PC HW Monitor streams Windows hardware stats to Android. Local-first design, security choices and open-source distribution.'
+status: Released
+license: AGPL-3.0
+platform: Android app · Windows server
+technologies: [Kotlin, Jetpack Compose, Material 3, Room, Python, FastAPI, WebSocket, pythonnet, psutil, PyInstaller]
+links:
+  - { label: GitHub, href: 'https://github.com/Xeakaes/PcHWmonitor' }
+  - { label: Google Play, href: 'https://play.google.com/store/apps/details?id=com.Obscrum.pchwmonitor' }
+  - { label: F-Droid, href: 'https://f-droid.org/packages/com.Obscrum.pchwmonitor/' }
+  - { label: Website, href: 'https://xeakaes.github.io/PcHWmonitor/' }
+---
+import ProductStage from '../../components/ProductStage.astro';
+import DataFlow from '../../components/DataFlow.astro';
+import Phone from '../../components/Phone.astro';
+import ember from '../../assets/pchw/main_ember.jpg';
+import light from '../../assets/pchw/main_light.jpg';
+import settings from '../../assets/pchw/settings_light.jpg';
+import cards from '../../assets/pchw/hero_left.jpg';
+
+<ProductStage eager />
+
+<Chapter title="What it is">
+
+PC HW Monitor is an open-source system in two parts: a server on a Windows PC and an Android app. The server reads the hardware and sends one status message per second. The app shows CPU, GPU, integrated GPU, RAM, disk, network, fan and FPS readings.
+
+The real-data server runs on Windows only. It ships as a single EXE with a tray menu that can show a QR code for connecting a phone.
+
+</Chapter>
+
+<Chapter title="Local-first decisions">
+
+By default the phone and the PC talk over the same Wi-Fi network.
+
+<ul class="rows">
+  <li>No user account, and no required cloud service.</li>
+  <li>The project’s privacy policy states there are no ads, analytics or developer-operated servers.</li>
+  <li>History is stored on the phone, covering the last hour.</li>
+  <li>Remote access is opt-in. A Cloudflare Tunnel, quick or named, avoids port forwarding, and traffic then passes through Cloudflare’s network.</li>
+</ul>
+
+</Chapter>
+
+<Chapter title="Security choices">
+
+An access token is required, and the server generates one if none is supplied. Setup is by QR code or by entering IP, port and token.
+
+TLS is **optional**. With it, the app connects over `wss://`; the server can generate a self-signed certificate, and the app shows a trust dialog. Without it, the connection uses `ws://` and is not encrypted. The app now asks for one-time consent before sending a token over such a connection.
+
+Hardening recorded in the repository history includes:
+
+<ul class="rows">
+  <li>rejecting browser origins on the WebSocket endpoint;</li>
+  <li>excluding the access token and local history from Android backups;</li>
+  <li>timing-safe token comparison, connection limits and rate limiting;</li>
+  <li>fixes to TLS trust and certificate pinning.</li>
+</ul>
+
+</Chapter>
+
+<Chapter title="Architecture" wide>
+
+<DataFlow />
+
+</Chapter>
+
+<Chapter title="Screens and features" wide>
+
+<div class="shots shots--four">
+  <figure><Phone src={ember} alt="Dark Ember dashboard with CPU gauge, live chart and GPU card." sizes="(min-width: 56rem) 20vw, 44vw" /><figcaption class="meta">Dashboard, Ember palette</figcaption></figure>
+  <figure><Phone src={light} alt="Light dashboard with CPU and GPU cards." sizes="(min-width: 56rem) 20vw, 44vw" /><figcaption class="meta">Dashboard, light theme</figcaption></figure>
+  <figure><Phone src={cards} alt="Dark dashboard scrolled to the RAM and Disk cards with usage charts." sizes="(min-width: 56rem) 20vw, 44vw" /><figcaption class="meta">RAM and disk cards</figcaption></figure>
+  <figure><Phone src={settings} alt="Settings with connection status, theme selector, palette swatches and chart window." sizes="(min-width: 56rem) 20vw, 44vw" /><figcaption class="meta">Settings</figcaption></figure>
+</div>
+
+Beyond these screens, the app offers a dashboard edit mode, custom backgrounds, tabs for several PCs, a persistent notification and a multilingual interface.
+
+</Chapter>
+
+<Chapter title="How it evolved">
+
+Taken from the repository’s tags and commit history. The public history starts with a second iteration, already labelled “v2”. Dates are from 2026.
+
+<ol class="log">
+  <li><time datetime="2026-08-02">2 August</time><span>History opens with a landscape dashboard, an EXE with LibreHardwareMonitor embedded, an integrated GPU card and a language selector.</span></li>
+  <li><time datetime="2026-08-06">6–8 August</time><span>Disk, network, fan and FPS metrics arrive, followed by dashboard editing, color palettes and a fuller landscape layout.</span></li>
+  <li><time datetime="2026-08-13">13 August</time><span>A security pass: token authentication, origin checks, network restrictions, and the release keystore removed from the repository.</span></li>
+  <li><time datetime="2026-08-22">21–24 August</time><span>Material You theming, notifications and QR connection.</span></li>
+  <li><time datetime="2026-09-16">15–17 September</time><span>Multi-PC support, optional TLS, Cloudflare Tunnel, custom backgrounds and a further round of security fixes.</span></li>
+  <li><time datetime="2026-10-05">3–5 October</time><span>Server management, connection settings and tunnel handling are reworked.</span></li>
+  <li><time datetime="2026-10-31">31 October</time><span>A first-launch setup guide is added.</span></li>
+  <li><time datetime="2026-11-24">4–24 November</time><span>The app reaches F-Droid and Google Play production, gains a community-contributed Greek translation, and adds consent for unencrypted token connections.</span></li>
+</ol>
+
+</Chapter>
+
+<Chapter title="Open-source distribution">
+
+The Android app and server are licensed under AGPL-3.0. The Windows EXE also bundles LibreHardwareMonitorLib (AGPL-3.0), cloudflared (Apache-2.0) and PresentMon (MIT).
+
+The app is distributed through Google Play and F-Droid, with builds also on GitHub. Preparing for F-Droid shaped the build: store descriptions were converted to the HTML subset F-Droid accepts, and an Android build-tool dependency block was stripped from APKs to meet its requirements.
+
+It was featured in [Android Weekly #739](https://androidweekly.net/issues/issue-739).
+
+</Chapter>
+
+<Chapter title="What comes next">
+
+The project roadmap lists Linux server support as **planned**. It has not been released. FPS capture is expected to remain Windows-only.
+
+</Chapter>

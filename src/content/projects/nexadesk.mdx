@@ -1,0 +1,83 @@
+---
+title: NexaDesk
+order: 4
+tier: 2
+summary: A Python desktop AI assistant with a chat window, a pixel-art avatar mode and built-in screen control.
+description: 'Case study: NexaDesk, an open-source desktop AI assistant for Linux and Windows with chat, avatar mode and permission-gated screen control.'
+status: Public repository · tagged releases
+license: MIT
+platform: Linux · Windows
+technologies: [Python 3.12, PySide6, SQLite, Pillow, RapidOCR, PyInstaller]
+links:
+  - { label: GitHub, href: 'https://github.com/Xeakaes/NexaDesk' }
+  - { label: Website, href: 'https://xeakaes.github.io/NexaDesk/' }
+---
+import ModuleDiagram from '../../components/ModuleDiagram.astro';
+import { Picture } from 'astro:assets';
+import dark from '../../assets/nexa/screenshot-dark.png';
+import light from '../../assets/nexa/screenshot-light.png';
+import avatar from '../../assets/nexa/screenshot-avatar.png';
+
+<Chapter title="What it is">
+
+NexaDesk is a desktop assistant for Linux and Windows. It has two faces over the same assistant: a chat window with saved history, and an avatar mode where a pixel-art character shows whether it is idle, thinking, working, speaking or has hit an error. The interface comes in dark and light themes, in English and Turkish.
+
+</Chapter>
+
+<Chapter title="Screens" wide>
+
+<div class="shots shots--lead">
+  <figure><Picture src={dark} alt="NexaDesk dark chat window with a dialog asking to Allow or Deny a keyboard action." formats={['avif', 'webp']} widths={[480, 880]} sizes="(min-width: 56rem) 42vw, 44vw" /><figcaption class="meta">Permission prompt, dark theme</figcaption></figure>
+  <figure><Picture src={light} alt="NexaDesk light chat window with a screenshot request and the assistant’s reply." formats={['avif', 'webp']} widths={[480, 880]} sizes="(min-width: 56rem) 42vw, 44vw" /><figcaption class="meta">Chat, light theme</figcaption></figure>
+  <figure><Picture src={avatar} alt="NexaDesk avatar mode: a small pixel-art robot beside a conversation bubble." formats={['avif', 'webp']} widths={[480, 880]} sizes="(min-width: 56rem) 42vw, 44vw" /><figcaption class="meta">Avatar mode</figcaption></figure>
+</div>
+
+<p class="meta">Screenshots published in the project repository.</p>
+
+</Chapter>
+
+<Chapter title="Structure" wide>
+
+<ModuleDiagram />
+
+</Chapter>
+
+<Chapter title="Screen control and permissions">
+
+The assistant can take screenshots, read text with on-device OCR, use the mouse and keyboard, and list or focus windows. The control server is embedded in the app, listens only on the local machine and requires a token that changes on each start.
+
+According to the project’s documentation, mouse, keyboard, OCR and window control wait for you to allow or deny them, and each tool’s permission can be changed in Settings.
+
+On Linux, keyboard and mouse tools need access to `/dev/uinput` or an X11 session.
+
+</Chapter>
+
+<Chapter title="Models and data">
+
+Ollama runs models locally. Groq, NVIDIA, Google and other OpenAI-compatible services can be configured instead. API keys are kept in a local secrets file that is excluded from the repository and packages, and chat history is kept in a local SQLite database.
+
+“Local-first” has a boundary: with a cloud provider, your messages, screenshots and recognized text can be sent to that provider. OCR itself runs on your device.
+
+</Chapter>
+
+<Chapter title="Implemented and experimental">
+
+<ul class="rows">
+  <li><strong>Implemented:</strong> chat and avatar modes, local history, the provider options above, screen control tools and the settings window.</li>
+  <li><strong>Experimental:</strong> the GitHub Copilot provider, which uses an unofficial API.</li>
+  <li><strong>In the source, after the latest tagged release reviewed:</strong> a client for connecting external MCP tool servers.</li>
+</ul>
+
+</Chapter>
+
+<Chapter title="Development journey">
+
+From tags and commit history, 2026:
+
+<ol class="log">
+  <li><time datetime="2026-10-09">9 October</time><span>Design notes, project skeleton, first interface and automated release builds.</span></li>
+  <li><time datetime="2026-10-12">10–14 October</time><span>A series of tagged releases, with fixes such as releasing held input on failure and shutdown, update checks and avatar improvements.</span></li>
+  <li><time datetime="2026-10-30">30 October</time><span>MCP client support is added to the source, with timeouts, cancellation, reconnection and cleanup on failure.</span></li>
+</ol>
+
+</Chapter>

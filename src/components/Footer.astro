@@ -1,0 +1,28 @@
+---
+import { url } from '../scripts/url';
+import { owner } from '../config/site';
+const year = new Date().getFullYear();
+---
+<footer class="wrap">
+  <div class="foot">
+    <p class="who">© {year} {owner.name}</p>
+    <nav aria-label="Footer">
+      <ul class="linkrow">
+        <li><a href={url('#work')}>Work</a></li>
+        <li><a href={url('#about')}>About</a></li>
+        <li><a href={url('#contact')}>Contact</a></li>
+      </ul>
+    </nav>
+    <ul class="linkrow">
+      <li><a href={owner.github}>GitHub</a></li>
+      <li><a href={`mailto:${owner.email}`}>Email</a></li>
+    </ul>
+  </div>
+</footer>
+<style>
+  footer { margin-top: var(--section); }
+  .foot { display: flex; flex-wrap: wrap; justify-content: space-between; align-items: center; gap: .5rem 2rem; border-top: 1px solid var(--text); padding-block: 1.25rem 2.5rem; font-size: .9375rem; }
+  .who { margin: 0; }
+  a { color: var(--text); display: inline-flex; align-items: center; min-height: 44px; min-width: 44px; text-decoration-color: transparent; }
+  a:hover { text-decoration-color: var(--accent); }
+</style>
