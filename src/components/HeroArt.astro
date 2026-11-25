@@ -64,8 +64,9 @@ const half = r[2] * Math.SQRT1_2; // half side of the square inscribed in r(2)
   svg { width: 100%; height: 100%; overflow: visible; }
   .stroke { fill: none; stroke: var(--text); stroke-width: 1.1; vector-effect: non-scaling-stroke; }
   .stroke--soft { stroke: var(--boundary); }
-  .stroke--accent { stroke: var(--accent); stroke-width: 1.5; }
-  .grid-line { stroke: var(--rule); stroke-width: 1; vector-effect: non-scaling-stroke; }
+  .stroke--accent { stroke: var(--art-ring); stroke-width: 1.5; }
+  :global(:root[data-theme='dark']) .stroke--accent { stroke-width: 2.75; }
+  .grid-line { stroke: var(--art-grid); stroke-width: 1; vector-effect: non-scaling-stroke; }
   .fill-accent, .centre, .node--accent { fill: var(--accent); }
   .node { fill: var(--text); }
   .node--accent { fill: var(--accent); }

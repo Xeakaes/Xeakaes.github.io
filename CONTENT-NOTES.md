@@ -65,5 +65,9 @@ Not found: a stated motivation or personal lessons. Those sections are omitted.
 - **Unverified link:** the `video2dlssnr` URL in the README (`github.com/TeamGPU/video2dlssnr`) could not be reached with git (it asked for credentials) and the page fetch was rate limited. The credit is shown **without a link**. If the URL works for you, add `href` back in the experiment's `index.md`.
 - A tag `v1.0.0` exists while the documentation still lists work-in-progress areas.
 
+## Dark theme colours
+
+After seeing the live site, the owner asked for more contrast in the dark theme. The dark tokens now deliberately differ from the table in the brief: a warm near-black background, brighter text and a more saturated terracotta. The light theme is unchanged. The values are in `src/styles/global.css` and appear twice (OS fallback and the theme toggle); keep both blocks in sync.
+
 ## Hosting
 Published from the `Xeakaes.github.io` repository as the user site. The repository was empty before the first push.
